@@ -1,0 +1,56 @@
+server:
+  port: 0
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/micro1_orderdb?createDatabaseIfNotExist=true
+    username: root
+    password: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  # Use 'update' to automatically create/update database schema
+    show-sql: true     # Show SQL queries in the console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect  # Adjust dialect based on your database
+
+  #  Kafka----------------
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+management:
+endpoints:
+  web:
+    exposure:
+      include: "*"
+endpoint:
+  health:
+    show-details: always # Show detailed health information
+health:
+  circuitBreakers:
+    enabled: true
+
+resilience4j.circuitbreaker:
+  instances:
+    ORDER-SERVICE:
+      registerHealthIndicator: true
+      eventConsumerBufferSize: 10
+      failureRateThreshold: 50
+      minimumNumberOfCalls: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      permittedNumberOfCallsInHalfOpenState: 3
+      waitDurationInOpenState: 5s
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+
+resilience4j.retry:
+    instances:
+      ORDER-SERVICE:
+        maxAttempts: 5
+        waitDuration: 7000ms
+
+

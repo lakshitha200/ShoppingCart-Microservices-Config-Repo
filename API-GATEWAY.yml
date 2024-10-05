@@ -1,0 +1,27 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    gateway:
+      routes[0]:
+        id: ORDER-SERVICE
+        uri: lb://ORDER-SERVICE
+        predicates[0]: Path=/api/orders/**
+#        filters: AuthenticationFilter
+
+      routes[1]:
+        id: PRODUCT-SERVICE
+        uri: lb://PRODUCT-SERVICE
+        predicates[0]: Path=/api/products/**
+#        filters: AuthenticationFilter
+
+      routes[2]:
+        id: PAYMENT-SERVICE
+        uri: lb://PAYMENT-SERVICE
+        predicates[0]: Path=/api/payments/**
+
+#      routes[3]:
+#        id: AUTH-SERVICE
+#        uri: lb://AUTH-SERVICE
+#        predicates[0]: Path=/api/auth/**
+
